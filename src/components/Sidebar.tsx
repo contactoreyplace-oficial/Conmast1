@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Usb, Sliders, Brain, BellRing, ShieldCheck, Server, Share2, Smartphone, Zap } from 'lucide-react';
+import { LayoutDashboard, Usb, Sliders, Brain, BellRing, ShieldCheck, Server, Share2, Smartphone, Zap, Workflow } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: string;
@@ -10,6 +10,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
   const menuItems = [
     { id: 'dashboard', label: 'Monitoreo en Vivo', icon: LayoutDashboard, desc: 'Dashboards y telemetría en tiempo real' },
     { id: 'quantum-frequency', label: 'Señal Cuántica & D2D Total', icon: Zap, desc: 'Quantum-FHSS y todos los medios D2D' },
+    { id: 'ifttt-automation', label: 'Automatización IFTTT', icon: Workflow, desc: 'Reglas lógicas sin programación' },
     { id: 'connection', label: 'Conexión & Onboarding', icon: Usb, desc: 'USB/OTG, Wi-Fi, QR y BLE' },
     { id: 'remote', label: 'Control Remoto y Vista', icon: Sliders, desc: 'Actuadores, relés y cámara remota' },
     { id: 'edge-server', label: 'Servidor Edge (Dispositivo Viejo)', icon: Server, desc: 'RAM, ROM, caché y servidor local' },

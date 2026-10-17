@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { IoTDevice, NotificationRule, AppNotification, AuditLog, UserProfile, UserRole } from '../types';
+import { db } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 interface IoTContextType {
   devices: IoTDevice[];
@@ -153,6 +155,7 @@ export const IoTProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     email: 'carlos.mendoza@iotnexus.io',
     role: 'admin',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    biometricRegistered: true,
   });
   const [notificationRules, setNotificationRules] = useState<NotificationRule[]>(initialRules);
   const [notifications, setNotifications] = useState<AppNotification[]>(initialNotifications);
@@ -185,6 +188,7 @@ export const IoTProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       status,
     };
     setAuditLogs(prev => [newLog, ...prev]);
+    addDoc(collection(db, 'auditLogs'), newLog).catch(err => console.error("Firestore sync error:", err));
   };
 
   // Real-time telemetry simulation ticker

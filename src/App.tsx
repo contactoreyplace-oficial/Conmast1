@@ -9,6 +9,7 @@ import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { LiveDashboard } from './components/LiveDashboard';
 import { QuantumFrequencyModule } from './components/QuantumFrequencyModule';
+import { IFTTTAutomationModule } from './components/IFTTTAutomationModule';
 import { DeviceManager } from './components/DeviceManager';
 import { RemoteControlView } from './components/RemoteControlView';
 import { EdgeServerModule } from './components/EdgeServerModule';
@@ -18,12 +19,18 @@ import { NotificationsCenter } from './components/NotificationsCenter';
 import { SecurityRBAC } from './components/SecurityRBAC';
 import { AndroidAPKModule } from './components/AndroidAPKModule';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { BiometricAuthModal } from './components/BiometricAuthModal';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950 relative">
+      {!isAuthenticated && (
+        <BiometricAuthModal onAuthenticated={() => setIsAuthenticated(true)} />
+      )}
+
       <Navbar />
 
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
@@ -32,6 +39,7 @@ export function MainLayout() {
         <main className="flex-1 overflow-y-auto bg-slate-950 relative pb-12">
           {activeTab === 'dashboard' && <LiveDashboard />}
           {activeTab === 'quantum-frequency' && <QuantumFrequencyModule />}
+          {activeTab === 'ifttt-automation' && <IFTTTAutomationModule />}
           {activeTab === 'connection' && <DeviceManager />}
           {activeTab === 'remote' && <RemoteControlView />}
           {activeTab === 'edge-server' && <EdgeServerModule />}

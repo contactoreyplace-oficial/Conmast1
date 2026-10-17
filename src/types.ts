@@ -23,6 +23,7 @@ export interface UserProfile {
   email: string;
   role: UserRole;
   avatar: string;
+  biometricRegistered: boolean;
 }
 
 export interface TelemetryPoint {
@@ -66,6 +67,24 @@ export interface NotificationRule {
   threshold: number;
   enabled: boolean;
   channel: 'push' | 'webhook' | 'email' | 'all';
+}
+
+export interface IFTTTRule {
+  id: string;
+  name: string;
+  enabled: boolean;
+  trigger: {
+    deviceId: string;
+    metric: 'temperature' | 'voltage' | 'humidity' | 'battery';
+    condition: 'gt' | 'lt';
+    threshold: number;
+  };
+  action: {
+    targetDeviceId: string;
+    actionType: 'relay1_on' | 'relay1_off' | 'relay2_on' | 'relay2_off' | 'set_motor' | 'send_push';
+    value?: number | string;
+  };
+  lastTriggered?: string;
 }
 
 export interface AppNotification {
