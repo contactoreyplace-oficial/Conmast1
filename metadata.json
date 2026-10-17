@@ -1,0 +1,11 @@
+{
+  "name": "IoT Nexus Pro - Control y Telemetría IoT",
+  "description": "Sistema profesional de conexión multidispositivo (USB/OTG, Wi-Fi, QR), monitoreo en tiempo real, análisis de telemetría con IA, notificaciones y control multiusuario seguro.",
+  "requestFramePermissions": [
+    "camera",
+    "notifications"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
