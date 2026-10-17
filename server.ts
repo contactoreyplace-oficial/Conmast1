@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
@@ -63,14 +64,22 @@ app.post('/api/ai/analyze-telemetry', async (req, res) => {
 });
 
 async function startServer() {
+  const httpServer = http.createServer(app);
+
+  const isHmrDisabled = process.env.DISABLE_HMR === 'true';
+
   const vite = await createViteServer({
-    server: { middlewareMode: true },
+    server: {
+      middlewareMode: true,
+      allowedHosts: true as const,
+      hmr: isHmrDisabled ? false : { server: httpServer },
+    },
     appType: 'spa',
   });
 
   app.use(vite.middlewares);
 
-  app.listen(PORT, '0.0.0.0', () => {
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }

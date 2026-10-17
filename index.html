@@ -3,6 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        // Intercept Vite HMR WebSocket since HMR is disabled in AI Studio
+        const NativeWebSocket = window.WebSocket;
+        if (NativeWebSocket) {
+          window.WebSocket = function(url, protocols) {
+            if (protocols === 'vite-hmr' || protocols === 'vite-ping') {
+              const fakeWs = new EventTarget();
+              fakeWs.readyState = 1; // WebSocket.OPEN
+              fakeWs.OPEN = 1;
+              fakeWs.CONNECTING = 0;
+              fakeWs.CLOSING = 2;
+              fakeWs.CLOSED = 3;
+              fakeWs.url = url || '';
+              fakeWs.protocol = protocols;
+              fakeWs.send = function() {};
+              fakeWs.close = function() {
+                fakeWs.readyState = 3;
+              };
+              setTimeout(function() {
+                fakeWs.dispatchEvent(new Event('open'));
+              }, 0);
+              return fakeWs;
+            }
+            return new NativeWebSocket(url, protocols);
+          };
+          window.WebSocket.prototype = NativeWebSocket.prototype;
+          window.WebSocket.CONNECTING = 0;
+          window.WebSocket.OPEN = 1;
+          window.WebSocket.CLOSING = 2;
+          window.WebSocket.CLOSED = 3;
+        }
+
+        // Filter out benign Vite WebSocket notices from console
+        const origConsoleError = console.error;
+        console.error = function() {
+          for (let i = 0; i < arguments.length; i++) {
+            const arg = arguments[i];
+            if (arg && (arg.message?.includes('WebSocket') || (typeof arg === 'string' && arg.includes('WebSocket')))) {
+              return;
+            }
+          }
+          return origConsoleError.apply(console, arguments);
+        };
+      })();
+    </script>
     <title>IoT Nexus Pro - Control y Telemetría IoT</title>
     <meta name="description" content="Sistema profesional de conexión multidispositivo (USB/OTG, Wi-Fi, QR), monitoreo en tiempo real, análisis de telemetría con IA, notificaciones y control multiusuario seguro." />
     <meta name="theme-color" content="#090d16" />
