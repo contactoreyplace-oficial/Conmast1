@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { IoTDevice, NotificationRule, AppNotification, AuditLog, UserProfile, UserRole } from '../types';
-import { db } from '../firebase';
+import { db, auth, signOut } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface IoTContextType {
   devices: IoTDevice[];
@@ -9,6 +10,7 @@ interface IoTContextType {
   setActiveDeviceId: (id: string) => void;
   currentUser: UserProfile;
   setCurrentUserRole: (role: UserRole) => void;
+  logout: () => Promise<void>;
   notifications: AppNotification[];
   notificationRules: NotificationRule[];
   auditLogs: AuditLog[];
@@ -176,6 +178,31 @@ export const IoTProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       email: rolesMap[role].email,
     }));
     addAuditLog('Cambio de Rol de Usuario', `Perfil cambiado a ${role}`, 'success');
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setCurrentUser(prev => ({
+          ...prev,
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuario Autenticado',
+          email: firebaseUser.email || 'usuario@iotnexus.io',
+          avatar: firebaseUser.photoURL || prev.avatar,
+          biometricRegistered: true,
+        }));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      addAuditLog('Cierre de Sesión', 'Usuario desconectado de Firebase', 'success');
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
   };
 
   const addAuditLog = (action: string, details: string, status: 'success' | 'warning' | 'failed') => {
@@ -371,6 +398,7 @@ export const IoTProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setActiveDeviceId,
       currentUser,
       setCurrentUserRole,
+      logout,
       notifications,
       notificationRules,
       auditLogs,

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoTProvider } from './context/IoTContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
@@ -20,10 +20,21 @@ import { SecurityRBAC } from './components/SecurityRBAC';
 import { AndroidAPKModule } from './components/AndroidAPKModule';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { BiometricAuthModal } from './components/BiometricAuthModal';
+import { auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950 relative">

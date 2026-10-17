@@ -14,7 +14,8 @@ export const Navbar: React.FC = () => {
     isSimulating,
     setIsSimulating,
     devices,
-    activeDeviceId
+    activeDeviceId,
+    logout
   } = useIoT();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -185,6 +186,18 @@ export const Navbar: React.FC = () => {
                     {currentUser.role === r && <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />}
                   </button>
                 ))}
+                <div className="border-t border-slate-800 mt-1 pt-1">
+                  <button
+                    onClick={() => {
+                      logout();
+                      setShowRoleMenu(false);
+                      window.location.reload();
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center justify-between"
+                  >
+                    <span>Cerrar Sesión (Firebase)</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>

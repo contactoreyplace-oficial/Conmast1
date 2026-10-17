@@ -1,0 +1,42 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Perfil de usuario con rol y datos de autenticación real",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["admin", "operator", "auditor", "technician"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Registro de auditoría y eventos de seguridad en Firestore",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "timestamp": { "type": "string", "maxLength": 64 },
+        "user": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 256 },
+        "details": { "type": "string", "maxLength": 512 },
+        "status": { "type": "string", "enum": ["success", "warning", "failed"] }
+      },
+      "required": ["id", "timestamp", "user", "action"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Perfiles privados de usuarios autenticados"
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Registros de eventos y auditoría del sistema IoT"
+    }
+  }
+}
